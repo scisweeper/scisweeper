@@ -1,5 +1,6 @@
 import h5io
 import inspect
+from multiprocessing.pool import ThreadPool
 import numpy as np
 import os
 import pandas
@@ -9,7 +10,28 @@ import textwrap
 
 
 def filter_function(file_name):
+    """
+
+    Args:
+        file_name:
+
+    Returns:
+
+    """
     return 'scisweeper.h5' in file_name
+
+
+def run_parallel(ssw, i):
+    """
+
+    Args:
+        ssw:
+        i:
+
+    Returns:
+
+    """
+    ssw._job_class(working_directory=i[0], input_dict=i[1]).run()
 
 
 class SciSweeperJob(object):
@@ -89,7 +111,7 @@ class SciSweeperJob(object):
         """
         function_dedent_str = textwrap.dedent(obj_str)
         function_dedent_str = function_dedent_str.replace('@staticmethod', '')
-        exec function_dedent_str
+        exec(function_dedent_str)
         return eval(function_dedent_str.split("(")[0][4:])
 
     @staticmethod
@@ -129,7 +151,7 @@ class SciSweeperJob(object):
             self._collect_output_source = self.obj_to_str(self.collect_output)
         job_dict = {'input': self._input_dict,
                     'settings': {'executable': self.executable,
-                                 'working_directory': self._working_directory,
+                                 'working_directory': os.path.abspath(self._working_directory),
                                  'write_input': self._write_input_source,
                                  'collect_output': self._collect_output_source}}
         if len(self.output_dict) != 0:
@@ -217,11 +239,20 @@ class SciSweeperJob(object):
 
 
 class SciSweeper(object):
-    def __init__(self, working_directory='.', job_class=None):
+    def __init__(self, working_directory='.', job_class=None, cores=1):
         self._fileindex = PyFileIndex(path=working_directory, filter_function=filter_function)
         self._job_class = job_class
         self._results_df = None
         self._broken_jobs = []
+        self._cores = cores
+
+    @property
+    def cores(self):
+        return self._cores
+
+    @cores.setter
+    def cores(self, cores):
+        self._cores = cores
 
     @property
     def job_class(self):
@@ -252,6 +283,25 @@ class SciSweeper(object):
                                                                 & self._fileindex.dataframe.path.str.contains(
             '/' + s + '/')].dirname.values
                                       for s in broken_jobs]).flatten().tolist()
+
+    def run_jobs_in_parallel(self, input_dict_lst, cores=None):
+        """
+
+        Args:
+            input_dict_lst:
+            cores:
+
+        Returns:
+
+        """
+        if cores is None:
+            cores = self._cores
+        tp = ThreadPool(cores)
+        for i in input_dict_lst:
+            tp.apply_async(run_parallel, (self, i,))
+
+        tp.close()
+        tp.join()
 
     def run_job(self, working_directory, input_dict):
         """
