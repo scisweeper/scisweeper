@@ -46,7 +46,7 @@ Define your write_input and collect_output function in a derived class:
     class BashSciSweeper(ssw.job):
         @property
         def executable(self): 
-            return 'bash /test.sh'
+            return 'bash ~/test.sh'
         
         @staticmethod
         def write_input(input_dict, working_directory='.'):      
