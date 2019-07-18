@@ -1,1 +1,1 @@
-from .scisweeper import SciSweeper, SciSweeperJob
+from .scisweeper import SciSweeper
