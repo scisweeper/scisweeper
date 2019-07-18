@@ -40,6 +40,9 @@ Start with importing `scisweeper` :
     
 Define your write_input and collect_output function in a derived class: 
 
+    import os 
+    from jinja2 import Template
+    
     class BashSciSweeper(ssw.job):
         @property
         def executable(self): 
