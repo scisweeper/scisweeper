@@ -38,18 +38,17 @@ Start with importing `scisweeper` :
     from scisweeper import SciSweeper
     ssw = SciSweeper()
     
-Define your write_input and collect_output function in a derived class: 
+Define your `write_input` and `collect_output` function in a derived class. The important part about these `write_input` and `collect_output` function is that all the necessary import statements have to be nested within the function. This might be counterintuitive in the beginning, but is essential as it allows scisweeper to transfer the function to the compute node where the code is going to be executed: 
 
-    import os 
-    from jinja2 import Template
-    
     class BashSciSweeper(ssw.job):
         @property
         def executable(self): 
             return 'bash ~/test.sh'
         
         @staticmethod
-        def write_input(input_dict, working_directory='.'):      
+        def write_input(input_dict, working_directory='.'):
+            import os 
+            from jinja2 import Template
             template = Template("{{value_1}} {{value_2}} {{value_3}}")
             template_str = template.render(value_1=input_dict['value_1'],
                                            value_2=input_dict['value_2'],
@@ -59,6 +58,7 @@ Define your write_input and collect_output function in a derived class:
     
         @staticmethod
         def collect_output(working_directory='.'):
+            import os 
             with open(os.path.join(working_directory, 'output.log'), 'r') as f:
                 output = f.readlines()
             return {'result': int(output[1])}
