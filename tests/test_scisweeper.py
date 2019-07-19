@@ -68,7 +68,8 @@ class TestSciSweeper(unittest.TestCase):
     def test_collect_again(self):
         self.ssw = SciSweeper(working_directory=os.path.join(file_location, 'calc_test_collect'))
         self.ssw.job_class = BashSciSweeper
-        self.ssw.run_jobs_in_parallel(input_dict_lst=[{'value_1': 1, 'value_2': 2, 'value_3': 3}], cores=1)
+        self.ssw.run_job(job_working_directory=os.path.join(self.ssw.working_directory, 'job_0'),
+                         input_dict={'value_1': 1, 'value_2': 2, 'value_3': 3})
         self.ssw.collect()
         self.assertEqual(self.ssw.results.result.values[0][0], 7)
         self.assertEqual(self.ssw.results.result.values[0][1], 1)
@@ -83,3 +84,18 @@ class TestSciSweeper(unittest.TestCase):
         self.assertEqual(self.ssw.results.value_2.values[0], 2)
         self.assertEqual(self.ssw.results.value_3.values[0], 3)
         self.assertEqual(self.ssw.results.dir.values[0], 'job_0')
+
+    def test_properties(self):
+        self.ssw = SciSweeper(working_directory=os.path.join(file_location, 'calc_test_property'))
+        self.assertIsNone(self.ssw.pysqa)
+        self.ssw.cores = 2
+        self.assertEqual(self.ssw.cores, 2)
+        self.ssw_job = SciSweeperJob(working_directory=os.path.join(file_location, 'calc_test_job_property'))
+        self.assertIsNone(self.ssw_job.pysqa)
+        self.assertEqual(self.ssw_job.working_directory, os.path.join(file_location, 'calc_test_job_property'))
+        with self.assertRaises(NotImplementedError):
+            self.ssw_job.executable
+        with self.assertRaises(NotImplementedError):
+            self.ssw_job.write_input(input_dict={'value_1': 1, 'value_2': 2, 'value_3': 3})
+        with self.assertRaises(NotImplementedError):
+            self.ssw_job.collect_output()
