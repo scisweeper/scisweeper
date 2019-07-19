@@ -28,7 +28,7 @@ setup(
                  'Programming Language :: Python :: 3.7'],
 
     keywords='scisweeper',
-    packages=find_packages(exclude=["*tests*"]),
+    packages=find_packages(exclude=["*tests*", "*binder*", "*notebooks*"]),
     install_requires=['pandas', 'numpy', 'pysqa', 'h5io', 'pyfileindex'],
     data_files=[("", ["LICENSE"])],
     cmdclass=versioneer.get_cmdclass(),
