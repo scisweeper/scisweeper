@@ -33,7 +33,7 @@ class BashSciSweeper(SciSweeperJob):
 
 class TestSciSweeperCli(unittest.TestCase):
     def test_cli_run(self):
-        os.makedirs('calc_test_cli', exist_ok=True)
+        os.makedirs('calc_test_cli')
         self.path_job = os.path.join(file_location, 'calc_test_cli', 'job')
         self.job = BashSciSweeper(working_directory=self.path_job,
                                   input_dict={'value_1': 1, 'value_2': 2, 'value_3': 3})
