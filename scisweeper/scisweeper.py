@@ -356,7 +356,7 @@ class SciSweeper(object):
             tp = ThreadPool(cores)
         else:
             tp = None
-        for counter, input_dict in tqdm(enumerate(input_dict_lst)):
+        for counter, input_dict in enumerate(tqdm(input_dict_lst)):
             if job_name_function is not None:
                 job_name = job_name_function(input_dict=input_dict, counter=counter)
                 working_directory = os.path.abspath(os.path.join(self.working_directory, job_name))
