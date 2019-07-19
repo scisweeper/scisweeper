@@ -5,6 +5,7 @@ scisweeper - scientific parameter sweeper
 [![Build Status](https://travis-ci.org/scisweeper/scisweeper.svg?branch=master)](https://travis-ci.org/scisweeper/scisweeper)
 [![Build status](https://ci.appveyor.com/api/projects/status/fv7y0esfcypgtbx0/branch/master?svg=true)](https://ci.appveyor.com/project/jan-janssen/scisweeper/branch/master)
 [![Coverage Status](https://coveralls.io/repos/github/scisweeper/scisweeper/badge.svg?branch=master)](https://coveralls.io/github/scisweeper/scisweeper?branch=master)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/scisweeper/scisweeper/master?filepath=notebooks%2Fdemo.ipynb)
 
 scisweeper is a utility for parameter sweeps in a scientific environment. By defining the `write_input` and 
 `collect_output` function, as well as a link to the `executable` the users can link scisweeper to their own code. 
