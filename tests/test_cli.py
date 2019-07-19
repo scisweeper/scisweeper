@@ -28,7 +28,7 @@ class BashSciSweeper(SciSweeperJob):
         import os
         with open(os.path.join(working_directory, 'output.log'), 'r') as f:
             output = f.readlines()
-        return {'result': int(output[-1])}
+        return {'result': [int(o) for o in output]}
 
 
 class TestJobFileTable(unittest.TestCase):
@@ -41,15 +41,18 @@ class TestJobFileTable(unittest.TestCase):
 
     def test_cli_run(self):
         path_job = os.path.join(os.path.abspath('calc_test_cli'), 'job')
-        subprocess.check_output('python -m scisweeper.cli -p ' + path_job, cwd=file_location)
+        subprocess.check_output('python -m scisweeper.cli -p ' + path_job, cwd=file_location, shell=True,
+                                universal_newlines=True)
         self.job.from_hdf()
-        self.assertEqual(self.job.output_dict['results'][0], 7)
-        self.assertEqual(self.job.output_dict['results'][1], 1)
+        self.assertEqual(self.job.output_dict['result'][0], 7)
+        self.assertEqual(self.job.output_dict['result'][1], 1)
 
     def test_error(self):
-        out = subprocess.check_output('python -m scisweeper.cli -x', cwd=file_location)
+        out = subprocess.check_output('python -m scisweeper.cli -x', cwd=file_location, shell=True,
+                                      universal_newlines=True)
         self.assertIn('cli.py --p <path>', out)
 
     def test_help(self):
-        out = subprocess.check_output('python -m scisweeper.cli -h', cwd=file_location)
+        out = subprocess.check_output('python -m scisweeper.cli -h', cwd=file_location, shell=True,
+                                      universal_newlines=True)
         self.assertIn('cli.py --p <path>', out)
