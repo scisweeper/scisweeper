@@ -227,6 +227,8 @@ class SciSweeperJob(object):
 
 class SciSweeper(object):
     def __init__(self, working_directory='.', job_class=None, cores=1, pysqa_config=None):
+        os.makedirs(working_directory, exist_ok=True)
+        self.working_directory = working_directory
         self._fileindex = PyFileIndex(path=working_directory, filter_function=filter_function)
         self._job_class = job_class
         self._results_df = None
@@ -310,9 +312,10 @@ class SciSweeper(object):
         tp = ThreadPool(cores)
         for counter, input_dict in enumerate(input_dict_lst):
             if job_name_function is not None:
-                working_directory = os.path.abspath(job_name_function(input_dict=input_dict, counter=counter))
+                job_name = job_name_function(input_dict=input_dict, counter=counter)
+                working_directory = os.path.abspath(os.path.join(self.working_directory, job_name))
             else:
-                working_directory = os.path.abspath('job_' + str(counter))
+                working_directory = os.path.abspath(os.path.join(self.working_directory, 'job_' + str(counter)))
             tp.apply_async(run_parallel, (self, working_directory, input_dict,))
         tp.close()
         tp.join()
@@ -339,6 +342,7 @@ class SciSweeper(object):
         """
         for path in self._fileindex.dataframe[~self._fileindex.dataframe.is_directory].dirname.values:
             self._job_class(working_directory=path).run_collect_output()
+        self.collect()
 
     def _check_jobs(self):
         """
