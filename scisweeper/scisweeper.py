@@ -7,6 +7,7 @@ import pandas
 from pyfileindex import PyFileIndex
 from pysqa import QueueAdapter
 import subprocess
+import sys
 import textwrap
 
 
@@ -70,7 +71,10 @@ class SciSweeperJob(object):
     @working_directory.setter
     def working_directory(self, working_directory):
         self._working_directory = os.path.abspath(working_directory)
-        os.makedirs(self._working_directory, exist_ok=True)
+        if sys.version_info[0] < 3:
+            os.makedirs(self._working_directory)
+        else:
+            os.makedirs(self._working_directory, exist_ok=True)
 
     @property
     def input_dict(self):
@@ -227,7 +231,10 @@ class SciSweeperJob(object):
 
 class SciSweeper(object):
     def __init__(self, working_directory='.', job_class=None, cores=1, pysqa_config=None):
-        os.makedirs(working_directory, exist_ok=True)
+        if sys.version_info[0] < 3:
+            os.makedirs(working_directory)
+        else:
+            os.makedirs(working_directory, exist_ok=True)
         self.working_directory = working_directory
         self._fileindex = PyFileIndex(path=working_directory, filter_function=filter_function)
         self._job_class = job_class
