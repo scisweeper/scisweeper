@@ -48,6 +48,18 @@ class TestSciSweeperCli(unittest.TestCase):
         os.remove(os.path.join(file_location, 'calc_test_cli', 'job', 'scisweeper.h5'))
         os.removedirs(os.path.join(file_location, 'calc_test_cli', 'job'))
 
+    def test_bash_sci_sweeper(self):
+        self.path_job = os.path.join(file_location, 'calc_test_job', 'job')
+        self.job = BashSciSweeper(working_directory=self.path_job,
+                                  input_dict={'value_1': 1, 'value_2': 2, 'value_3': 3})
+        self.job.run()
+        self.assertEqual(self.job.output_dict['result'][0], 7)
+        self.assertEqual(self.job.output_dict['result'][1], 1)
+        os.remove(os.path.join(file_location, 'calc_test_job', 'job', 'input_file'))
+        os.remove(os.path.join(file_location, 'calc_test_job', 'job', 'output.log'))
+        os.remove(os.path.join(file_location, 'calc_test_job', 'job', 'scisweeper.h5'))
+        os.removedirs(os.path.join(file_location, 'calc_test_job', 'job'))
+
     def test_error(self):
         out = subprocess.check_output('python -m scisweeper.cli -x', cwd=file_location, shell=True,
                                       universal_newlines=True)
