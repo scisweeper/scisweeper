@@ -362,7 +362,7 @@ class SciSweeper(object):
                 self._job_id_lst.append(self.job_class(working_directory=working_directory,
                                                        input_dict=input_dict,
                                                        pysqa_config=self.pysqa,
-                                                       cores=self.cores).run())
+                                                       cores=cores).run())
         if self._pysqa is None:
             tp.close()
             tp.join()
