@@ -1,5 +1,6 @@
 import unittest
 import os
+from time import sleep
 from scisweeper.scisweeper import SciSweeperJob, SciSweeper
 
 
@@ -45,6 +46,10 @@ class BashSciSweeper2(SciSweeperJob):
 
 class TestSciSweeper(unittest.TestCase):
     @classmethod
+    def setUpClass(cls):
+        cls.sleep_period = 5
+
+    @classmethod
     def tearDownClass(cls):
         for j, d in zip(['job_0_1', 'job_0'], ['calc_test_sweeper', 'calc_test_collect']):
             os.remove(os.path.join(file_location, d, j, 'input_file'))
@@ -57,6 +62,8 @@ class TestSciSweeper(unittest.TestCase):
         self.ssw.job_class = BashSciSweeper
         self.ssw.job_name_function = job_name
         self.ssw.run_jobs_in_parallel(input_dict_lst=[{'value_1': 1, 'value_2': 2, 'value_3': 3}], cores=1)
+        if os.name == 'nt':
+            sleep(self.sleep_period)
         self.ssw.collect()
         self.assertEqual(self.ssw.results.result.values[0][0], 7)
         self.assertEqual(self.ssw.results.result.values[0][1], 1)
@@ -70,6 +77,8 @@ class TestSciSweeper(unittest.TestCase):
         self.ssw.job_class = BashSciSweeper
         self.ssw.run_job(job_working_directory=os.path.join(self.ssw.working_directory, 'job_0'),
                          input_dict={'value_1': 1, 'value_2': 2, 'value_3': 3})
+        if os.name == 'nt':
+            sleep(self.sleep_period)
         self.ssw.collect()
         self.assertEqual(self.ssw.results.result.values[0][0], 7)
         self.assertEqual(self.ssw.results.result.values[0][1], 1)
@@ -79,6 +88,9 @@ class TestSciSweeper(unittest.TestCase):
         self.assertEqual(self.ssw.results.dir.values[0], 'job_0')
         self.ssw.job_class = BashSciSweeper2
         self.ssw.run_collect_output()
+        if os.name == 'nt':
+            sleep(self.sleep_period)
+            self.ssw.collect()
         self.assertEqual(self.ssw.results.result.values[0], 7)
         self.assertEqual(self.ssw.results.value_1.values[0], 1)
         self.assertEqual(self.ssw.results.value_2.values[0], 2)
