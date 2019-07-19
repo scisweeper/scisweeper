@@ -114,7 +114,8 @@ Or we can identify broken calculations using:
 
     ssw.broken_jobs
     
-For more information feel free to look at the unit tests and the example notebooks. 
+For more information feel free to look at the unit tests and the example notebooks.
+https://github.com/scisweeper/scisweeper/blob/master/notebooks/demo.ipynb 
 
 # License
 The scisweeper is released under the BSD license https://github.com/scisweeper/scisweeper/blob/master/LICENSE . 
