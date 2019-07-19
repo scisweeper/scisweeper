@@ -31,7 +31,7 @@ class BashSciSweeper(SciSweeperJob):
         return {'result': [int(o) for o in output]}
 
 
-class TestJobFileTable(unittest.TestCase):
+class TestSciSweeperCli(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         os.makedirs('calc_test_cli', exist_ok=True)
