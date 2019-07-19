@@ -34,23 +34,11 @@ def run_parallel(scisweeper, working_directory, input_dict):
         input_dict (dict): Dictionary with input parameters
     """
     return scisweeper.job_class(working_directory=working_directory,
-                                input_dict=input_dict,
-                                pysqa_config=scisweeper.pysqa).run()
-
-
-result_list = []
-def log_result(result):
-    """
-    Internal function to store the queue ids in a list
-
-    Args:
-        result (int): queue id
-    """
-    result_list.append(result)
+                                input_dict=input_dict).run()
 
 
 class SciSweeperJob(object):
-    def __init__(self, working_directory=None, input_dict=None, pysqa_config=None):
+    def __init__(self, working_directory=None, input_dict=None, pysqa_config=None, cores=1):
         self._working_directory = None
         self.working_directory = working_directory
         if input_dict is not None:
@@ -63,6 +51,7 @@ class SciSweeperJob(object):
         self._collect_output_source = None
         self._pysqa = None
         self.pysqa = pysqa_config
+        self._cores = cores
 
     @property
     def pysqa(self):
@@ -74,6 +63,14 @@ class SciSweeperJob(object):
             self._pysqa = QueueAdapter(pysqa_config)
         else:
             self._pysqa = pysqa_config
+
+    @property
+    def cores(self):
+        return self._cores
+
+    @cores.setter
+    def cores(self, cores):
+        self._cores = cores
 
     @property
     def working_directory(self):
@@ -220,7 +217,7 @@ class SciSweeperJob(object):
             self.to_hdf()
             return self._pysqa.submit_job(command='python -m scisweeper.cli -p ' + self._working_directory,
                                           working_directory=self._working_directory,
-                                          job_name=os.path.basename(self._working_directory))
+                                          job_name=os.path.basename(self._working_directory), cores=self.cores)
 
     def run_broken_again(self):
         """
@@ -331,8 +328,8 @@ class SciSweeper(object):
             pandas.Dataframe/ None: Status table
         """
         if self._pysqa is not None:
-            return pandas.concat([self.pysqa.get_status_of_job(process_id=j)
-                                  for j in self._job_id_lst]).reset_index(drop=True)
+            df_lst = [self.pysqa.get_status_of_job(process_id=j) for j in self._job_id_lst]
+            return pandas.concat([d for d in df_lst if len(d) > 0]).reset_index(drop=True)
 
     def run_jobs_in_parallel(self, input_dict_lst, cores=None, job_name_function=None):
         """
@@ -349,17 +346,26 @@ class SciSweeper(object):
             cores = self._cores
         if job_name_function is None:
             job_name_function = self.job_name_function
-        tp = ThreadPool(cores)
+        if self._pysqa is None:
+            tp = ThreadPool(cores)
+        else:
+            tp = None
         for counter, input_dict in enumerate(input_dict_lst):
             if job_name_function is not None:
                 job_name = job_name_function(input_dict=input_dict, counter=counter)
                 working_directory = os.path.abspath(os.path.join(self.working_directory, job_name))
             else:
                 working_directory = os.path.abspath(os.path.join(self.working_directory, 'job_' + str(counter)))
-            tp.apply_async(run_parallel, (self, working_directory, input_dict,), callback=log_result)
-        tp.close()
-        tp.join()
-        self._job_id_lst = result_list
+            if self._pysqa is None:
+                tp.apply_async(run_parallel, (self, working_directory, input_dict,))
+            else:
+                self._job_id_lst.append(self.job_class(working_directory=working_directory,
+                                                       input_dict=input_dict,
+                                                       pysqa_config=self.pysqa,
+                                                       cores=self.cores).run())
+        if self._pysqa is None:
+            tp.close()
+            tp.join()
 
     def run_job(self, job_working_directory, input_dict):
         """
