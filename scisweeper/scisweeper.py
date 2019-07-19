@@ -219,7 +219,8 @@ class SciSweeperJob(object):
         else:
             self.to_hdf()
             return self._pysqa.submit_job(command='python -m scisweeper.cli -p ' + self._working_directory,
-                                          working_directory=self._working_directory)
+                                          working_directory=self._working_directory,
+                                          job_name=os.path.basename(self._working_directory))
 
     def run_broken_again(self):
         """
