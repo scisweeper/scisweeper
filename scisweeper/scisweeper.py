@@ -39,7 +39,8 @@ def run_parallel(scisweeper, working_directory, input_dict):
 
 class SciSweeperJob(object):
     def __init__(self, working_directory=None, input_dict=None, pysqa_config=None):
-        self._working_directory = working_directory
+        self._working_directory = None
+        self.working_directory = working_directory
         if input_dict is not None:
             self._input_dict = input_dict
         else:
@@ -68,7 +69,8 @@ class SciSweeperJob(object):
 
     @working_directory.setter
     def working_directory(self, working_directory):
-        self._working_directory = working_directory
+        self._working_directory = os.path.abspath(working_directory)
+        os.makedirs(self._working_directory, exist_ok=True)
 
     @property
     def input_dict(self):
@@ -188,22 +190,20 @@ class SciSweeperJob(object):
         Returns:
             int/ None: If the job is submitted to a queuing system the queue id is returned, else it is None.
         """
-        working_directory = os.path.abspath(self._working_directory)
-        os.makedirs(working_directory, exist_ok=True)
         if self._pysqa is None:
-            self.write_input(input_dict=self.input_dict, working_directory=working_directory)
+            self.write_input(input_dict=self.input_dict, working_directory=self._working_directory)
             if self._executable is None:
                 self._executable = self.executable
             subprocess.check_output(self._executable,
-                                    cwd=working_directory,
+                                    cwd=self._working_directory,
                                     universal_newlines=True,
                                     shell=True)
-            self.output_dict = self.collect_output(working_directory=working_directory)
+            self.output_dict = self.collect_output(working_directory=self._working_directory)
             self.to_hdf()
         else:
             self.to_hdf()
-            return self._pysqa.submit_job(command='python -m scisweeper.cli -p ' + working_directory,
-                                          working_directory=working_directory)
+            return self._pysqa.submit_job(command='python -m scisweeper.cli -p ' + self._working_directory,
+                                          working_directory=self._working_directory)
 
     def run_broken_again(self):
         """
