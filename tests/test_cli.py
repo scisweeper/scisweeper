@@ -32,27 +32,21 @@ class BashSciSweeper(SciSweeperJob):
 
 
 class TestSciSweeperCli(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        os.makedirs('calc_test_cli', exist_ok=True)
-        cls.job = BashSciSweeper(working_directory=os.path.join(os.path.abspath('calc_test_cli'), 'job'),
-                                 input_dict={'value_1': 1, 'value_2': 2, 'value_3': 3})
-        cls.job.to_hdf()
-
-    @classmethod
-    def tearDownClass(cls):
-        os.remove(os.path.join(file_location, 'calc_test_cli', 'job', 'input_file'))
-        os.remove(os.path.join(file_location, 'calc_test_cli', 'job', 'output.log'))
-        os.remove(os.path.join(file_location, 'calc_test_cli', 'job', 'scisweeper.h5'))
-        os.removedirs(os.path.join(file_location, 'calc_test_cli', 'job'))
-
     def test_cli_run(self):
-        path_job = os.path.join(os.path.abspath('calc_test_cli'), 'job')
-        subprocess.check_output('python -m scisweeper.cli -p ' + path_job, cwd=file_location, shell=True,
+        os.makedirs('calc_test_cli', exist_ok=True)
+        self.path_job = os.path.join(file_location, 'calc_test_cli', 'job')
+        self.job = BashSciSweeper(working_directory=self.path_job,
+                                  input_dict={'value_1': 1, 'value_2': 2, 'value_3': 3})
+        self.job.to_hdf()
+        subprocess.check_output('python -m scisweeper.cli -p ' + self.path_job, cwd=file_location, shell=True,
                                 universal_newlines=True)
         self.job.from_hdf()
         self.assertEqual(self.job.output_dict['result'][0], 7)
         self.assertEqual(self.job.output_dict['result'][1], 1)
+        os.remove(os.path.join(file_location, 'calc_test_cli', 'job', 'input_file'))
+        os.remove(os.path.join(file_location, 'calc_test_cli', 'job', 'output.log'))
+        os.remove(os.path.join(file_location, 'calc_test_cli', 'job', 'scisweeper.h5'))
+        os.removedirs(os.path.join(file_location, 'calc_test_cli', 'job'))
 
     def test_error(self):
         out = subprocess.check_output('python -m scisweeper.cli -x', cwd=file_location, shell=True,
