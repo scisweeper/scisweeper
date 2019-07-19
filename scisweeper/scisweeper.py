@@ -328,8 +328,13 @@ class SciSweeper(object):
             pandas.Dataframe/ None: Status table
         """
         if self._pysqa is not None:
-            df_lst = [self.pysqa.get_status_of_job(process_id=j) for j in self._job_id_lst]
-            return pandas.concat([d for d in df_lst if len(d) > 0]).reset_index(drop=True)
+            df_lst = [{'queue_id': j[0],
+                       'job_name': j[1],
+                       'status': self.pysqa.get_status_of_job(process_id=j[0])} for j in self._job_id_lst]
+            for d in df_lst:
+                if d['status'] is None:
+                    d['status'] = 'finished'
+            return pandas.DataFrame(df_lst)
 
     def run_jobs_in_parallel(self, input_dict_lst, cores=None, job_name_function=None):
         """
@@ -359,10 +364,10 @@ class SciSweeper(object):
             if self._pysqa is None:
                 tp.apply_async(run_parallel, (self, working_directory, input_dict,))
             else:
-                self._job_id_lst.append(self.job_class(working_directory=working_directory,
-                                                       input_dict=input_dict,
-                                                       pysqa_config=self.pysqa,
-                                                       cores=cores).run())
+                self._job_id_lst.append([self.job_class(working_directory=working_directory,
+                                                        input_dict=input_dict,
+                                                        pysqa_config=self.pysqa,
+                                                        cores=cores).run(), os.path.basename(working_directory)])
         if self._pysqa is None:
             tp.close()
             tp.join()
