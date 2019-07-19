@@ -33,9 +33,20 @@ def run_parallel(scisweeper, working_directory, input_dict):
         working_directory (str): working directory where the calculation should be executed
         input_dict (dict): Dictionary with input parameters
     """
-    scisweeper.job_class(working_directory=working_directory,
-                         input_dict=input_dict,
-                         pysqa_config=scisweeper.pysqa).run()
+    return scisweeper.job_class(working_directory=working_directory,
+                                input_dict=input_dict,
+                                pysqa_config=scisweeper.pysqa).run()
+
+
+result_list = []
+def log_result(result):
+    """
+    Internal function to store the queue ids in a list
+
+    Args:
+        result (int): queue id
+    """
+    result_list.append(result)
 
 
 class SciSweeperJob(object):
@@ -247,6 +258,7 @@ class SciSweeper(object):
         self.job = SciSweeperJob
         self._pysqa = None
         self.pysqa = pysqa_config
+        self._job_id_lst = []
 
     @property
     def pysqa(self):
@@ -303,6 +315,24 @@ class SciSweeper(object):
             '/' + s + '/')].dirname.values
                                       for s in broken_jobs]).flatten().tolist()
 
+    def delete_jobs_from_queue(self):
+        """
+        Delete jobs from queuing system
+        """
+        if self._pysqa is not None:
+            _ = [self.pysqa.delete_job(process_id=j) for j in self._job_id_lst]
+
+    def get_job_status(self):
+        """
+        Get job status from queuing system
+
+        Returns:
+            pandas.Dataframe/ None: Status table
+        """
+        if self._pysqa is not None:
+            return pandas.concat([self.pysqa.get_status_of_job(process_id=j)
+                                  for j in self._job_id_lst]).reset_index(drop=True)
+
     def run_jobs_in_parallel(self, input_dict_lst, cores=None, job_name_function=None):
         """
         Execute multiple SciSweeperJobs in parallel using multiprocessing.ThreadPool
@@ -325,9 +355,10 @@ class SciSweeper(object):
                 working_directory = os.path.abspath(os.path.join(self.working_directory, job_name))
             else:
                 working_directory = os.path.abspath(os.path.join(self.working_directory, 'job_' + str(counter)))
-            tp.apply_async(run_parallel, (self, working_directory, input_dict,))
+            tp.apply_async(run_parallel, (self, working_directory, input_dict,), callback=log_result)
         tp.close()
         tp.join()
+        self._job_id_lst = result_list
 
     def run_job(self, job_working_directory, input_dict):
         """
