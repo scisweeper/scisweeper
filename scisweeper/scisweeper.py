@@ -8,6 +8,7 @@ from pyfileindex import PyFileIndex
 from pysqa import QueueAdapter
 import subprocess
 import sys
+from tqdm import tqdm
 import textwrap
 
 
@@ -318,7 +319,7 @@ class SciSweeper(object):
         Delete jobs from queuing system
         """
         if self._pysqa is not None:
-            _ = [self.pysqa.delete_job(process_id=j) for j in self._job_id_lst]
+            _ = [self.pysqa.delete_job(process_id=j[0]) for j in self._job_id_lst]
 
     def get_job_status(self):
         """
@@ -355,7 +356,7 @@ class SciSweeper(object):
             tp = ThreadPool(cores)
         else:
             tp = None
-        for counter, input_dict in enumerate(input_dict_lst):
+        for counter, input_dict in tqdm(enumerate(input_dict_lst)):
             if job_name_function is not None:
                 job_name = job_name_function(input_dict=input_dict, counter=counter)
                 working_directory = os.path.abspath(os.path.join(self.working_directory, job_name))
@@ -392,7 +393,7 @@ class SciSweeper(object):
         For each job in this directory and all sub directories collect the output again. Use this function after
         updating the collect_output function.
         """
-        for path in self._fileindex.dataframe[~self._fileindex.dataframe.is_directory].dirname.values:
+        for path in tqdm(self._fileindex.dataframe[~self._fileindex.dataframe.is_directory].dirname.values):
             self._job_class(working_directory=path).run_collect_output()
         self.collect()
 
@@ -401,7 +402,7 @@ class SciSweeper(object):
         Internal helper function to check the jobs and build the results table.
         """
         dict_lst, all_keys_lst, broken_jobs = [], [], []
-        for path in self._fileindex.dataframe[~self._fileindex.dataframe.is_directory].dirname.values:
+        for path in tqdm(self._fileindex.dataframe[~self._fileindex.dataframe.is_directory].dirname.values):
             job_dict = {}
             job_dict['dir'] = os.path.basename(path)
             job = self._job_class(working_directory=path)

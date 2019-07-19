@@ -39,7 +39,7 @@ install:
 - '"%CONDA%\Scripts\activate.bat"'
 - "conda config --set always_yes yes --set changeps1 no"
 - "conda update -q conda"
-- "conda install -c conda-forge pandas scandir h5io numpy pysqa"
+- "conda install -c conda-forge pandas scandir h5io numpy pysqa tqdm"
 - "conda info -a"
 - "pip install --pre ."
 

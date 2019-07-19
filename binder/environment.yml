@@ -6,3 +6,4 @@ dependencies:
 - numpy
 - h5io
 - pysqa
+- tqdm

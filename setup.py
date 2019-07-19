@@ -29,7 +29,7 @@ setup(
 
     keywords='scisweeper',
     packages=find_packages(exclude=["*tests*", "*binder*", "*notebooks*"]),
-    install_requires=['pandas', 'numpy', 'pysqa', 'h5io', 'pyfileindex'],
+    install_requires=['pandas', 'numpy', 'pysqa', 'h5io', 'pyfileindex', 'tqdm'],
     data_files=[("", ["LICENSE"])],
     cmdclass=versioneer.get_cmdclass(),
     )
