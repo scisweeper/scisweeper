@@ -39,6 +39,13 @@ class TestJobFileTable(unittest.TestCase):
                                  input_dict={'value_1': 1, 'value_2': 2, 'value_3': 3})
         cls.job.to_hdf()
 
+    @classmethod
+    def tearDownClass(cls):
+        os.remove(os.path.join(file_location, 'calc_test_cli', 'job', 'input_file'))
+        os.remove(os.path.join(file_location, 'calc_test_cli', 'job', 'output.log'))
+        os.remove(os.path.join(file_location, 'calc_test_cli', 'job', 'scisweeper.h5'))
+        os.removedirs(os.path.join(file_location, 'calc_test_cli', 'job'))
+
     def test_cli_run(self):
         path_job = os.path.join(os.path.abspath('calc_test_cli'), 'job')
         subprocess.check_output('python -m scisweeper.cli -p ' + path_job, cwd=file_location, shell=True,
