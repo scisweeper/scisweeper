@@ -1,10 +1,10 @@
 # scisweeper
 scisweeper - scientific parameter sweeper
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/61d50c2f9f5f404f879a02650ff3da35)](https://www.codacy.com/app/jan-janssen/pyfileindex?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=pyfileindex/pyfileindex&amp;utm_campaign=Badge_Grade)
-[![Build Status](https://travis-ci.org/pyfileindex/pyfileindex.svg?branch=master)](https://travis-ci.org/pyfileindex/pyfileindex)
-[![Build status](https://ci.appveyor.com/api/projects/status/n13j4aous9wohncy/branch/master?svg=true)](https://ci.appveyor.com/project/jan-janssen/pyfileindex/branch/master)
-[![Coverage Status](https://coveralls.io/repos/github/pyfileindex/pyfileindex/badge.svg?branch=master)](https://coveralls.io/github/pyfileindex/pyfileindex?branch=master)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/caa562772b6944a2bcc3bd4d33ec62b0)](https://www.codacy.com/app/jan-janssen/scisweeper?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=scisweeper/scisweeper&amp;utm_campaign=Badge_Grade)
+[![Build Status](https://travis-ci.org/scisweeper/scisweeper.svg?branch=master)](https://travis-ci.org/scisweeper/scisweeper)
+[![Build status](https://ci.appveyor.com/api/projects/status/fv7y0esfcypgtbx0/branch/master?svg=true)](https://ci.appveyor.com/project/jan-janssen/scisweeper/branch/master)
+[![Coverage Status](https://coveralls.io/repos/github/scisweeper/scisweeper/badge.svg?branch=master)](https://coveralls.io/github/scisweeper/scisweeper?branch=master)
 
 scisweeper is a utility for parameter sweeps in a scientific environment. By defining the `write_input` and 
 `collect_output` function, as well as a link to the `executable` the users can link scisweeper to their own code. 
