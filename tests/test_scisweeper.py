@@ -52,7 +52,7 @@ class TestSciSweeper(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         for j, d in zip(['job_0_1', 'job_0', 'job_0'], 
-                        ['calc_test_sweeper', 'calc_test_collect', 'calc_test_sweeper_no_job_name]):
+                        ['calc_test_sweeper', 'calc_test_collect', 'calc_test_sweeper_no_job_name']):
             os.remove(os.path.join(file_location, d, j, 'input_file'))
             os.remove(os.path.join(file_location, d, j, 'output.log'))
             os.remove(os.path.join(file_location, d, j, 'scisweeper.h5'))
