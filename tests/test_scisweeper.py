@@ -73,7 +73,7 @@ class TestSciSweeper(unittest.TestCase):
         self.assertEqual(self.ssw.results.value_3.values[0], 3)
         self.assertEqual(self.ssw.results.dir.values[0], 'job_0_1')
         
-    def test_sweeper(self):
+    def test_sweeper_no_job_name(self):
         self.ssw = SciSweeper(working_directory=os.path.join(file_location, 'calc_test_sweeper_no_job_name'))
         self.ssw.job_class = BashSciSweeper
         self.ssw.run_jobs_in_parallel(input_dict_lst=[{'value_1': 1, 'value_2': 2, 'value_3': 3}])
@@ -85,7 +85,7 @@ class TestSciSweeper(unittest.TestCase):
         self.assertEqual(self.ssw.results.value_1.values[0], 1)
         self.assertEqual(self.ssw.results.value_2.values[0], 2)
         self.assertEqual(self.ssw.results.value_3.values[0], 3)
-        self.assertEqual(self.ssw.results.dir.values[0], 'job_0_1')
+        self.assertEqual(self.ssw.results.dir.values[0], 'job_0')
 
     def test_collect_again(self):
         self.ssw = SciSweeper(working_directory=os.path.join(file_location, 'calc_test_collect'))
