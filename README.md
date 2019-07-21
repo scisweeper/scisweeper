@@ -117,6 +117,15 @@ Or we can identify broken calculations using:
 For more information feel free to look at the unit tests and the example notebooks.
 https://github.com/scisweeper/scisweeper/blob/master/notebooks/demo.ipynb 
 
+# Queuing system
+To interface with the queuing system we use pysqa - https://github.com/pyiron/pysqa - which is constructed around the idea that even though modern queuing systems allow for an wide range of different configuration, most users submit the majority of their jobs with very similar parameters. Sample configurations for the specific queuing systems are availabe in the pysqa tests:
+
+* lsf - https://github.com/pyiron/pysqa/tree/master/tests/config/lsf
+* moab - https://github.com/pyiron/pysqa/tree/master/tests/config/moab
+* SGE - https://github.com/pyiron/pysqa/tree/master/tests/config/sge
+* slurm - https://github.com/pyiron/pysqa/tree/master/tests/config/slurm
+* torque - https://github.com/pyiron/pysqa/tree/master/tests/config/torque
+
 # License
 The scisweeper is released under the BSD license https://github.com/scisweeper/scisweeper/blob/master/LICENSE . 
 It is a spin-off of the pyiron project https://github.com/pyiron/pyiron therefore if you use the scisweeper for your 
