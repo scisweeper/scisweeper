@@ -120,7 +120,7 @@ class TestSciSweeper(unittest.TestCase):
         self.assertEqual(len(self.ssw.broken_jobs), 0)
         self.ssw_job = SciSweeperJob(working_directory=os.path.join(file_location, 'calc_test_job_property'))
         self.ssw_job.cores = 4 
-        self.assertEqual(self.ssw_job.cores, 2)
+        self.assertEqual(self.ssw_job.cores, 4)
         self.assertIsNone(self.ssw_job.pysqa)
         self.assertEqual(self.ssw_job.working_directory, os.path.join(file_location, 'calc_test_job_property'))
         with self.assertRaises(NotImplementedError):
