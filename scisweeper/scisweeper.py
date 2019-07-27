@@ -197,28 +197,34 @@ class SciSweeperJob(object):
         if 'output' in job_dict.keys():
             self.output_dict = job_dict['output']
 
-    def run(self):
+    def run(self, run_again=False):
         """
         Execute the calculation by writing the input files, running the executable and storing the output
+        
+        Args:
+            run_again (bool): If the calculation already exists it is commonly skipped, but with this option 
+                              you can force to execute the calculation again. 
 
         Returns:
             int/ None: If the job is submitted to a queuing system the queue id is returned, else it is None.
+            
         """
-        if self._pysqa is None:
-            self.write_input(input_dict=self.input_dict, working_directory=self._working_directory)
-            if self._executable is None:
-                self._executable = self.executable
-            subprocess.check_output(self._executable,
-                                    cwd=self._working_directory,
-                                    universal_newlines=True,
-                                    shell=True)
-            self.output_dict = self.collect_output(working_directory=self._working_directory)
-            self.to_hdf()
-        else:
-            self.to_hdf()
-            return self._pysqa.submit_job(command='python -m scisweeper.cli -p ' + self._working_directory,
-                                          working_directory=self._working_directory,
-                                          job_name=os.path.basename(self._working_directory), cores=self.cores)
+        if not os.path.exists(os.path.join(self._working_directory, 'scisweeper.h5')) or run_again:
+            if self._pysqa is None:
+                self.write_input(input_dict=self.input_dict, working_directory=self._working_directory)
+                if self._executable is None:
+                    self._executable = self.executable
+                subprocess.check_output(self._executable,
+                                        cwd=self._working_directory,
+                                        universal_newlines=True,
+                                        shell=True)
+                self.output_dict = self.collect_output(working_directory=self._working_directory)
+                self.to_hdf()
+            else:
+                self.to_hdf()
+                return self._pysqa.submit_job(command='python -m scisweeper.cli -p ' + self._working_directory,
+                                              working_directory=self._working_directory,
+                                              job_name=os.path.basename(self._working_directory), cores=self.cores)
 
     def run_broken_again(self):
         """
