@@ -26,7 +26,7 @@ def command_line(argv):
                 path = arg
         ssw_job = SciSweeperJob(working_directory=path)
         ssw_job.from_hdf()
-        ssw_job.run()
+        ssw_job.run(run_again=True)
         sys.exit()
 
 
