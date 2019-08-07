@@ -3,7 +3,6 @@ scisweeper - scientific parameter sweeper
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/caa562772b6944a2bcc3bd4d33ec62b0)](https://www.codacy.com/app/jan-janssen/scisweeper?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=scisweeper/scisweeper&amp;utm_campaign=Badge_Grade)
 [![Build Status](https://travis-ci.org/scisweeper/scisweeper.svg?branch=master)](https://travis-ci.org/scisweeper/scisweeper)
-<!-- [![Build status](https://ci.appveyor.com/api/projects/status/fv7y0esfcypgtbx0/branch/master?svg=true)](https://ci.appveyor.com/project/jan-janssen/scisweeper/branch/master) -->
 [![Coverage Status](https://coveralls.io/repos/github/scisweeper/scisweeper/badge.svg?branch=master)](https://coveralls.io/github/scisweeper/scisweeper?branch=master)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/scisweeper/scisweeper/master?filepath=notebooks%2Fdemo.ipynb)
 
