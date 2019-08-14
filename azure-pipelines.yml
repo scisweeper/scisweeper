@@ -34,7 +34,7 @@ jobs:
 
   - bash: |
       source activate scisweeper
-      coverage run --omit scisweeper/_version.py -m unittest discover tests
+      coverage run -m unittest discover tests
     displayName: run tests
 
 - job: 'OSX'
