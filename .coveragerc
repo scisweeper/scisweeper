@@ -1,0 +1,5 @@
+# .coveragerc to control coverage.py
+[run]
+source = scisweeper
+omit = scisweeper/_version.py
+concurrency = multiprocessing 
