@@ -22,7 +22,7 @@ def filter_function(file_name):
     Returns:
         bool: [True/ False]
     """
-    return 'scisweeper.h5' in file_name
+    return "scisweeper.h5" in file_name
 
 
 def run_parallel(scisweeper, working_directory, input_dict):
@@ -34,12 +34,15 @@ def run_parallel(scisweeper, working_directory, input_dict):
         working_directory (str): working directory where the calculation should be executed
         input_dict (dict): Dictionary with input parameters
     """
-    return scisweeper.job_class(working_directory=working_directory,
-                                input_dict=input_dict).run()
+    return scisweeper.job_class(
+        working_directory=working_directory, input_dict=input_dict
+    ).run()
 
 
 class SciSweeperJob(object):
-    def __init__(self, working_directory=None, input_dict=None, pysqa_config=None, cores=1):
+    def __init__(
+        self, working_directory=None, input_dict=None, pysqa_config=None, cores=1
+    ):
         self._working_directory = None
         self.working_directory = working_directory
         if input_dict is not None:
@@ -133,12 +136,12 @@ class SciSweeperJob(object):
             function: resulting function
         """
         function_dedent_str = textwrap.dedent(obj_str)
-        function_dedent_str = function_dedent_str.replace('@staticmethod', '')
+        function_dedent_str = function_dedent_str.replace("@staticmethod", "")
         exec(function_dedent_str)
         return eval(function_dedent_str.split("(")[0][4:])
 
     @staticmethod
-    def write_input(input_dict, working_directory='.'):
+    def write_input(input_dict, working_directory="."):
         """
         Write the input to files in the current working directory - This functions has to be implemented by the user.
 
@@ -149,7 +152,7 @@ class SciSweeperJob(object):
         raise NotImplementedError
 
     @staticmethod
-    def collect_output(working_directory='.'):
+    def collect_output(working_directory="."):
         """
         Parse output to dictionary - This functions has to be implemented by the user.
 
@@ -169,33 +172,43 @@ class SciSweeperJob(object):
             self._write_input_source = self._obj_to_str(self.write_input)
         if self._collect_output_source is None:
             self._collect_output_source = self._obj_to_str(self.collect_output)
-        job_dict = {'input': self._input_dict,
-                    'settings': {'executable': self.executable,
-                                 'working_directory': os.path.abspath(self._working_directory),
-                                 'write_input': self._write_input_source,
-                                 'collect_output': self._collect_output_source}}
+        job_dict = {
+            "input": self._input_dict,
+            "settings": {
+                "executable": self.executable,
+                "working_directory": os.path.abspath(self._working_directory),
+                "write_input": self._write_input_source,
+                "collect_output": self._collect_output_source,
+            },
+        }
         if len(self.output_dict) != 0:
-            job_dict['output'] = self.output_dict
-        h5io.write_hdf5(os.path.join(self._working_directory, 'scisweeper.h5'), job_dict, overwrite="update")
+            job_dict["output"] = self.output_dict
+        h5io.write_hdf5(
+            os.path.join(self._working_directory, "scisweeper.h5"),
+            job_dict,
+            overwrite="update",
+        )
 
     def from_hdf(self):
         """
         Restore input, output and the class definition from an HDF5 file - to maintain orthogonal persistence.
         """
-        job_dict = h5io.read_hdf5(os.path.join(self._working_directory, 'scisweeper.h5'))
-        if 'input' in job_dict.keys():
-            self.input_dict = job_dict['input']
-        if 'settings' in job_dict.keys():
-            self._executable = job_dict['settings']['executable']
-            self._working_directory = job_dict['settings']['working_directory']
-            if 'NotImplementedError' in inspect.getsource(self.write_input):
-                self._write_input_source = job_dict['settings']['write_input']
+        job_dict = h5io.read_hdf5(
+            os.path.join(self._working_directory, "scisweeper.h5")
+        )
+        if "input" in job_dict.keys():
+            self.input_dict = job_dict["input"]
+        if "settings" in job_dict.keys():
+            self._executable = job_dict["settings"]["executable"]
+            self._working_directory = job_dict["settings"]["working_directory"]
+            if "NotImplementedError" in inspect.getsource(self.write_input):
+                self._write_input_source = job_dict["settings"]["write_input"]
                 self.write_input = self._str_to_obj(self._write_input_source)
-            if 'NotImplementedError' in inspect.getsource(self.collect_output):
-                self._collect_output_source = job_dict['settings']['collect_output']
+            if "NotImplementedError" in inspect.getsource(self.collect_output):
+                self._collect_output_source = job_dict["settings"]["collect_output"]
                 self.collect_output = self._str_to_obj(self._collect_output_source)
-        if 'output' in job_dict.keys():
-            self.output_dict = job_dict['output']
+        if "output" in job_dict.keys():
+            self.output_dict = job_dict["output"]
 
     def run(self, run_again=False):
         """
@@ -209,22 +222,35 @@ class SciSweeperJob(object):
             int/ None: If the job is submitted to a queuing system the queue id is returned, else it is None.
             
         """
-        if not os.path.exists(os.path.join(self._working_directory, 'scisweeper.h5')) or run_again:
+        if (
+            not os.path.exists(os.path.join(self._working_directory, "scisweeper.h5"))
+            or run_again
+        ):
             if self._pysqa is None:
-                self.write_input(input_dict=self.input_dict, working_directory=self._working_directory)
+                self.write_input(
+                    input_dict=self.input_dict,
+                    working_directory=self._working_directory,
+                )
                 if self._executable is None:
                     self._executable = self.executable
-                subprocess.check_output(self._executable,
-                                        cwd=self._working_directory,
-                                        universal_newlines=True,
-                                        shell=True)
-                self.output_dict = self.collect_output(working_directory=self._working_directory)
+                subprocess.check_output(
+                    self._executable,
+                    cwd=self._working_directory,
+                    universal_newlines=True,
+                    shell=True,
+                )
+                self.output_dict = self.collect_output(
+                    working_directory=self._working_directory
+                )
                 self.to_hdf()
             else:
                 self.to_hdf()
-                return self._pysqa.submit_job(command='python -m scisweeper.cli -p ' + self._working_directory,
-                                              working_directory=self._working_directory,
-                                              job_name=os.path.basename(self._working_directory), cores=self.cores)
+                return self._pysqa.submit_job(
+                    command="python -m scisweeper.cli -p " + self._working_directory,
+                    working_directory=self._working_directory,
+                    job_name=os.path.basename(self._working_directory),
+                    cores=self.cores,
+                )
 
     def run_broken_again(self):
         """
@@ -232,7 +258,9 @@ class SciSweeperJob(object):
         calculation failed previously.
         """
         self.from_hdf()
-        self.output_dict = self.collect_output(working_directory=self._working_directory)
+        self.output_dict = self.collect_output(
+            working_directory=self._working_directory
+        )
         if len(self.output_dict) == 0:
             self.run()
 
@@ -242,19 +270,25 @@ class SciSweeperJob(object):
         collect_output function.
         """
         self.from_hdf()
-        self.output_dict = self.collect_output(working_directory=self._working_directory)
+        self.output_dict = self.collect_output(
+            working_directory=self._working_directory
+        )
         self.to_hdf()
 
 
 class SciSweeper(object):
-    def __init__(self, working_directory='.', job_class=None, cores=1, pysqa_config=None):
+    def __init__(
+        self, working_directory=".", job_class=None, cores=1, pysqa_config=None
+    ):
         self.working_directory = os.path.abspath(working_directory)
         if sys.version_info[0] >= 3:
             os.makedirs(self.working_directory, exist_ok=True)
         else:
             if not os.path.exists(self.working_directory):
                 os.makedirs(self.working_directory)
-        self._fileindex = PyFileIndex(path=self.working_directory, filter_function=filter_function)
+        self._fileindex = PyFileIndex(
+            path=self.working_directory, filter_function=filter_function
+        )
         self._job_class = job_class
         self._results_df = None
         self._broken_jobs = []
@@ -315,10 +349,19 @@ class SciSweeper(object):
         self._fileindex.update()
         dict_lst, broken_jobs = self._check_jobs()
         self._results_df = pandas.DataFrame(dict_lst)
-        self._broken_jobs = np.array([self._fileindex.dataframe[(~self._fileindex.dataframe.is_directory)
-                                                                & self._fileindex.dataframe.path.str.contains(
-            '/' + s + '/')].dirname.values
-                                      for s in broken_jobs]).flatten().tolist()
+        self._broken_jobs = (
+            np.array(
+                [
+                    self._fileindex.dataframe[
+                        (~self._fileindex.dataframe.is_directory)
+                        & self._fileindex.dataframe.path.str.contains("/" + s + "/")
+                    ].dirname.values
+                    for s in broken_jobs
+                ]
+            )
+            .flatten()
+            .tolist()
+        )
 
     def delete_jobs_from_queue(self):
         """
@@ -335,10 +378,15 @@ class SciSweeper(object):
             pandas.Dataframe/ None: Status table
         """
         if self._pysqa is not None:
-            status_lst = self.pysqa.get_status_of_jobs(process_id_lst=[j[0] for j in self._job_id_lst])
-            return pandas.DataFrame([{'queue_id': j[0],
-                                      'job_name': j[1],
-                                      'status': s} for s, j in zip(status_lst, self._job_id_lst)])
+            status_lst = self.pysqa.get_status_of_jobs(
+                process_id_lst=[j[0] for j in self._job_id_lst]
+            )
+            return pandas.DataFrame(
+                [
+                    {"queue_id": j[0], "job_name": j[1], "status": s}
+                    for s, j in zip(status_lst, self._job_id_lst)
+                ]
+            )
 
     def run_jobs_in_parallel(self, input_dict_lst, cores=None, job_name_function=None):
         """
@@ -362,16 +410,27 @@ class SciSweeper(object):
         for counter, input_dict in enumerate(tqdm(input_dict_lst)):
             if job_name_function is not None:
                 job_name = job_name_function(input_dict=input_dict, counter=counter)
-                working_directory = os.path.abspath(os.path.join(self.working_directory, job_name))
+                working_directory = os.path.abspath(
+                    os.path.join(self.working_directory, job_name)
+                )
             else:
-                working_directory = os.path.abspath(os.path.join(self.working_directory, 'job_' + str(counter)))
+                working_directory = os.path.abspath(
+                    os.path.join(self.working_directory, "job_" + str(counter))
+                )
             if self._pysqa is None:
-                tp.apply_async(run_parallel, (self, working_directory, input_dict,))
+                tp.apply_async(run_parallel, (self, working_directory, input_dict))
             else:
-                self._job_id_lst.append([self.job_class(working_directory=working_directory,
-                                                        input_dict=input_dict,
-                                                        pysqa_config=self.pysqa,
-                                                        cores=cores).run(), os.path.basename(working_directory)])
+                self._job_id_lst.append(
+                    [
+                        self.job_class(
+                            working_directory=working_directory,
+                            input_dict=input_dict,
+                            pysqa_config=self.pysqa,
+                            cores=cores,
+                        ).run(),
+                        os.path.basename(working_directory),
+                    ]
+                )
         if self._pysqa is None:
             tp.close()
             tp.join()
@@ -387,16 +446,22 @@ class SciSweeper(object):
         Returns:
             int/ None: If the job is submitted to a queuing system the queue id is returned, else it is None.
         """
-        return self._job_class(working_directory=job_working_directory,
-                               input_dict=input_dict,
-                               pysqa_config=self.pysqa).run()
+        return self._job_class(
+            working_directory=job_working_directory,
+            input_dict=input_dict,
+            pysqa_config=self.pysqa,
+        ).run()
 
     def run_collect_output(self):
         """
         For each job in this directory and all sub directories collect the output again. Use this function after
         updating the collect_output function.
         """
-        for path in tqdm(self._fileindex.dataframe[~self._fileindex.dataframe.is_directory].dirname.values):
+        for path in tqdm(
+            self._fileindex.dataframe[
+                ~self._fileindex.dataframe.is_directory
+            ].dirname.values
+        ):
             self._job_class(working_directory=path).run_collect_output()
         self.collect()
 
@@ -405,9 +470,13 @@ class SciSweeper(object):
         Internal helper function to check the jobs and build the results table.
         """
         dict_lst, all_keys_lst, broken_jobs = [], [], []
-        for path in tqdm(self._fileindex.dataframe[~self._fileindex.dataframe.is_directory].dirname.values):
+        for path in tqdm(
+            self._fileindex.dataframe[
+                ~self._fileindex.dataframe.is_directory
+            ].dirname.values
+        ):
             job_dict = {}
-            job_dict['dir'] = os.path.basename(path)
+            job_dict["dir"] = os.path.basename(path)
             job = self._job_class(working_directory=path)
             job.from_hdf()
             for k, v in job.input_dict.items():
@@ -425,5 +494,5 @@ class SciSweeper(object):
                     d[k] = np.nan
                     broken_flag = True
                 if broken_flag:
-                    broken_jobs.append(d['dir'])
+                    broken_jobs.append(d["dir"])
         return dict_lst, broken_jobs
