@@ -15,12 +15,12 @@ def command_line(argv):
     try:
         opts, args = getopt.getopt(argv, "p:h", ["project_path=", "help"])
     except getopt.GetoptError:
-        print('cli.py --p <path>')
+        print("cli.py --p <path>")
         sys.exit()
     else:
         for opt, arg in opts:
             if opt in ("-h", "--help"):
-                print('cli.py --p <path>')
+                print("cli.py --p <path>")
                 sys.exit()
             elif opt in ("-p", "--_path"):
                 path = arg
