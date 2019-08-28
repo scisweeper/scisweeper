@@ -22,6 +22,6 @@ jobs:
     - name: Install Dependences
       run: conda install -y -c conda-forge coverage pandas scandir h5io numpy pysqa tqdm pip
     - name: Install package 
-      run: pip install --pre .
+      run: $(pwd)/miniconda/bin/pip install --pre .
     - name: Test with coverage
-      run: coverage run -m unittest discover tests
+      run: $(pwd)/miniconda/bin/coverage run -m unittest discover tests
