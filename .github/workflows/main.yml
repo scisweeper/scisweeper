@@ -11,6 +11,8 @@ jobs:
         operating-system: [ubuntu-latest]
     steps:
     - uses: actions/checkout@v1
+    - name: Update environment variable
+      run: export PATH="/usr/share/miniconda/bin:$PATH"
     - name: Update conda
       run: conda update -q conda
     - name: Install Dependences
