@@ -21,6 +21,8 @@ jobs:
       run: conda update -q conda
     - name: Install Dependences
       run: conda install -y -c conda-forge coverage pandas scandir h5io numpy pysqa tqdm pip
+    - name: Environment variables 
+      run: env
     - name: Install package 
       run: |
         source /home/runner/work/miniconda/bin/activate base
