@@ -8,13 +8,18 @@ jobs:
     strategy:
       max-parallel: 4
       matrix:
-        operating-system: [ubuntu-latest]
+        operating-system: [ubuntu-latest, windows-latest, macos-latest]
+        python-version: [3.5, 3.6, 3.7]
     steps:
     - uses: actions/checkout@v1
     - name: Update conda
       run: conda update -q conda
     - name: Install Dependences
-      run: conda create -n scisweeper -q --yes -c conda-forge coverage pandas scandir h5io numpy pysqa tqdm pip
+      run: |
+        env
+        conda create -n scisweeper -q --yes -c conda-forge coverage pandas scandir h5io numpy pysqa tqdm pip python=${PYTHON-VERSION}
+      with:
+	        python-version: ${{ matrix.python-version }}
     - name: Install package 
       run: |
         export PATH="/usr/share/miniconda/bin:$PATH"
