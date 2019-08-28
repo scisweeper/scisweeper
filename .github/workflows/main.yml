@@ -15,18 +15,11 @@ jobs:
       run: conda update -q conda
     - name: Install Dependences
       run: conda install -y -c conda-forge coverage pandas scandir h5io numpy pysqa tqdm pip
-    - name: Environment variables 
-      run: | 
-        export PATH="/usr/share/miniconda/bin:$PATH"
-        env
-        which pip 
     - name: Install package 
       run: |
         export PATH="/usr/share/miniconda/bin:$PATH"
-        source /usr/share/miniconda/bin/activate base
         pip install --pre .
     - name: Test with coverage
       run: |
         export PATH="/usr/share/miniconda/bin:$PATH"
-        source /usr/share/miniconda/bin/activate base
         coverage run -m unittest discover tests
