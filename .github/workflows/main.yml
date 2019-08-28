@@ -20,12 +20,12 @@ jobs:
     - name: Update conda
       run: conda update -q conda
     - name: Install Dependences
-      run: conda create -n scisweeper -q --yes -c conda-forge coverage pandas scandir h5io numpy pysqa tqdm pip
+      run: conda install -y -c conda-forge coverage pandas scandir h5io numpy pysqa tqdm pip
     - name: Install package 
       run: |
-        source /home/runner/work/miniconda/bin/activate scisweeper
+        source /home/runner/work/miniconda/bin/activate base
         pip install --pre .
     - name: Test with coverage
       run: |
-        source /home/runner/work/miniconda/bin/activate scisweeper
+        source /home/runner/work/miniconda/bin/activate base
         coverage run -m unittest discover tests
