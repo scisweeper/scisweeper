@@ -23,9 +23,9 @@ jobs:
       run: conda create -n scisweeper -q --yes -c conda-forge coverage pandas scandir h5io numpy pysqa tqdm pip
     - name: Install package 
       run: |
-        source activate scisweeper
+        source /home/runner/work/miniconda/bin/activate scisweeper
         pip install --pre .
     - name: Test with coverage
       run: |
-        source activate scisweeper
+        source /home/runner/work/miniconda/bin/activate scisweeper
         coverage run -m unittest discover tests
