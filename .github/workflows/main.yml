@@ -17,9 +17,9 @@ jobs:
     - name: Install Dependences
       run: |
         env
-        conda create -n scisweeper -q --yes -c conda-forge coverage pandas scandir h5io numpy pysqa tqdm pip python=${python-version}
+        conda create -n scisweeper -q --yes -c conda-forge coverage pandas scandir h5io numpy pysqa tqdm pip python=${PYVER}
       env:
-        python-version: ${{ matrix.python-version }}
+        PYVER: ${{ matrix.python-version }}
     - name: Install package 
       run: |
         export PATH="/usr/share/miniconda/bin:$PATH"
