@@ -11,13 +11,15 @@ jobs:
         operating-system: [ubuntu-latest]
     steps:
     - uses: actions/checkout@v1
-    - name: Update environment variable
-      run: export PATH="/usr/share/miniconda/bin:$PATH"
     - name: Update conda
       run: conda update -q conda
     - name: Install Dependences
       run: conda install -y -c conda-forge coverage pandas scandir h5io numpy pysqa tqdm pip
     - name: Install package 
-      run: pip install --pre .
+      run: |
+        export PATH="/usr/share/miniconda/bin:$PATH"
+        pip install --pre .
     - name: Test with coverage
-      run: coverage run -m unittest discover tests
+      run: |
+        export PATH="/usr/share/miniconda/bin:$PATH"
+        coverage run -m unittest discover tests
