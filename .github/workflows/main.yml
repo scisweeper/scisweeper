@@ -17,8 +17,10 @@ jobs:
       run: bash miniconda.sh -b -p $(pwd)/miniconda
     - name: Configure Miniconda
       run: export PATH="$(pwd)/miniconda/bin:$PATH"
+    - name: Update conda
+      run: conda update -q conda
     - name: Install Dependences
-      run: conda install -y -c conda-forge coverage pandas scandir h5io numpy pysqa tqdm
+      run: conda install -y -c conda-forge coverage pandas scandir h5io numpy pysqa tqdm pip
     - name: Install package 
       run: pip install --pre .
     - name: Test with coverage
