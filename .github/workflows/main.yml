@@ -18,7 +18,9 @@ jobs:
     - name: Download Miniconda
       run: wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
     - name: Install Miniconda
-      run: bash miniconda.sh -b -p $HOME/miniconda
+      run: bash miniconda.sh -b -p $(pwd)/miniconda
+    - name: Configure Miniconda
+      run: export PATH="$(pwd)/miniconda/bin:$PATH"
     - name: Update conda 
       run: conda update -q conda
     - name: Install Dependences
