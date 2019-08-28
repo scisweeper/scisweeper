@@ -15,9 +15,7 @@ jobs:
     - name: Update conda
       run: conda update -q conda
     - name: Install Dependences
-      run: |
-        env
-        conda create -n scisweeper -q --yes -c conda-forge coverage pandas scandir h5io numpy pysqa tqdm pip python=${PYVER}
+      run: conda create -n scisweeper -q --yes -c conda-forge coverage pandas scandir h5io numpy pysqa tqdm pip python=${PYVER}
       env:
         PYVER: ${{ matrix.python-version }}
     - name: Install package 
