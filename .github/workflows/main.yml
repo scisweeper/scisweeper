@@ -24,8 +24,8 @@ jobs:
     - name: Install package 
       run: $(pwd)/miniconda/bin/pip install --pre .
       env: 
-        PATH="/home/runner/work/miniconda/bin"
+        PATH: /home/runner/work/miniconda/bin
     - name: Test with coverage
       run: $(pwd)/miniconda/bin/coverage run -m unittest discover tests
       env: 
-        PATH="/home/runner/work/miniconda/bin"
+        PATH: /home/runner/work/miniconda/bin
